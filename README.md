@@ -1,4 +1,3 @@
-```markdown
 # 📰 Daily AI Tech Newsletter Automation (n8n + OpenAI)
 
 This project automates the creation and delivery of a daily tech newsletter using **n8n workflows** and **GPT-4o**. It fetches the latest news from APIs and RSS feeds, formats them, and emails a summarized version to subscribers.
