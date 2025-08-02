@@ -1,0 +1,186 @@
+{
+  "name": "Newsletter Generator & Sender",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "2d74fd10-f76f-4776-8375-d05fe689bbbd",
+      "name": "Daily Newsletter Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "15BgFYvW0_GySXNtncvbYTVAdrfkIJdOUUwYTkXJZesQ",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "NewsContent",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "69bbb97c-86b7-4a90-8b08-83f7ddab70d5",
+      "name": "Read Collected News",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        144,
+        80
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uphqx0AP2rXgnYnu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o-mini"
+        },
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "c7a39464-499e-4e06-82e8-badc146136a5",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        304
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "kxvHZi48hL3OKyHp",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Create an engaging daily tech newsletter from the provided news articles. Use a friendly, conversational tone that makes complex tech topics accessible to everyone.\n\nStructure the newsletter as follows:\n1. Catchy subject line\n2. Brief welcome message\n3. Top 3-5 headlines with engaging summaries (2-3 sentences each)\n4. Include original article links\n5. Closing with call-to-action\n\nMake each summary informative yet easy to read, highlighting why each story matters to our readers.",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are an expert tech newsletter writer who creates engaging, accessible content for a diverse audience. Your writing style is friendly, informative, and helps readers understand why tech news matters to them."
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "=Here are today's collected news articles: {{ $json.toJsonString() }}\n\nPlease create our daily tech newsletter following the structure and tone guidelines provided."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "742b1620-9d41-4700-bc36-13acb16caa76",
+      "name": "Newsletter Generator",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        368,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "vdisha421@gmail.com",
+        "subject": "=Daily Tech Newsletter - {{ $now.format('MMMM d, yyyy') }}",
+        "message": "={{ $('Newsletter Generator').item.json.text }}",
+        "options": {}
+      },
+      "id": "792464d3-2740-4500-a0dd-8a91874d4554",
+      "name": "Send Newsletter Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        768,
+        80
+      ],
+      "webhookId": "3f708daa-9b09-4ba7-a63d-c4fe71270ae0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "c7UeEuONCPEGJiOt",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Daily Newsletter Schedule": {
+      "main": [
+        [
+          {
+            "node": "Read Collected News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Collected News": {
+      "main": [
+        [
+          {
+            "node": "Newsletter Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Newsletter Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Newsletter Generator": {
+      "main": [
+        [
+          {
+            "node": "Send Newsletter Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f43a0e6e-b739-4c95-87de-d98533f57e67",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "63d2b9dc75c80c9ffc5648a78a5679e52d1dfac7ca6734b3a12c9c2967cf4562"
+  },
+  "id": "WHoyWBW3lOsMbvd5",
+  "tags": []
+}
