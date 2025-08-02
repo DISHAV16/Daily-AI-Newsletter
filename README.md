@@ -1,8 +1,3 @@
-
----
-
-## 📁 **Daily AI Newsletter – README.md**
-
 ```markdown
 # 📰 Daily AI Tech Newsletter Automation (n8n + OpenAI)
 
