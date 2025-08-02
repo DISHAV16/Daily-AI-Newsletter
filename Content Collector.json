@@ -1,0 +1,288 @@
+{
+  "name": "Content Collector",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 4
+            }
+          ]
+        }
+      },
+      "id": "83570e48-95c1-4873-b65d-8111337fd4e9",
+      "name": "Content Collection Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        4912,
+        2944
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://jsonplaceholder.typicode.com/posts?pageSize=10",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5d078dc9-ef18-469d-b237-54d06a6a605e",
+      "name": "Fetch Tech News",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5136,
+        2848
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.artificialintelligence-news.com/feed/",
+        "options": {}
+      },
+      "id": "ad486485-43cf-4468-9504-18d23f38723a",
+      "name": "Fetch AI News RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        5136,
+        3040
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "description",
+              "value": "={{ $json.body }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "url",
+              "value": "=https://example.com/{{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "publishedAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "source",
+              "value": "Test Data",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1249318e-da39-4c55-89f7-dcb3b9bfcbc2",
+      "name": "Format News Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5360,
+        2944
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "15BgFYvW0_GySXNtncvbYTVAdrfkIJdOUUwYTkXJZesQ",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 992211726,
+          "mode": "list",
+          "cachedResultName": "NewsContent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15BgFYvW0_GySXNtncvbYTVAdrfkIJdOUUwYTkXJZesQ/edit#gid=992211726"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "title": "={{ $json.title }}",
+            "description": "={{ $json.description }}",
+            "url": "={{ $json.url }}",
+            "publishedAt": "={{ $json.publishedAt }}",
+            "source": "={{ $json.source }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "publishedAt",
+              "displayName": "publishedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3baec9d1-c01f-4a31-a965-ca4786d010a7",
+      "name": "Store in Content Database",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        5808,
+        2944
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "myaT9a0Sws2HMlhP",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 10
+      },
+      "id": "d89ee2b7-7dd2-4009-be65-88ba6204283e",
+      "name": "Limit to 10 Items",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        5584,
+        2880
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Content Collection Schedule": {
+      "main": [
+        [
+          {
+            "node": "Fetch Tech News",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch AI News RSS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Tech News": {
+      "main": [
+        [
+          {
+            "node": "Format News Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch AI News RSS": {
+      "main": [
+        [
+          {
+            "node": "Format News Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format News Data": {
+      "main": [
+        [
+          {
+            "node": "Limit to 10 Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit to 10 Items": {
+      "main": [
+        [
+          {
+            "node": "Store in Content Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8b611251-a267-469a-b938-103ecbff1929",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "63d2b9dc75c80c9ffc5648a78a5679e52d1dfac7ca6734b3a12c9c2967cf4562"
+  },
+  "id": "OhXMMqpb72juACUd",
+  "tags": []
+}
